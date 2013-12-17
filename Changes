@@ -1,0 +1,5 @@
+0.02 : Tue 17 Dec 2013
+    - Added Makefile.PL / MANIFEST / Changes
+
+0.01 : Tue 17 Dec 2013
+    - First build, some support for ISO-639 and ISO-15924

@@ -1,0 +1,8 @@
+Changes
+lib/Net/IDN/LanguageTag.pm
+LICENSE
+Makefile.PL
+MANIFEST			This list of files
+README.md
+t/01_requires.t
+t/02_language_tag.t

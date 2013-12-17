@@ -32,7 +32,7 @@ use base qw/Class::Accessor/;
 our @FORMATS=qw(language iso639_1 iso639_2 iso15924 iso15924_numeric);
 __PACKAGE__->mk_accessors(@FORMATS);
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 sub new {
 	my ($class,$lt) = @_;
@@ -48,6 +48,7 @@ sub parse {
   return 1 if $lt =~ m/^\w{3}$/ && $self->_from_iso639_2($lt);
   return 1 if $lt =~ m/^(\w{4}|\d{3})$/ && $self->_from_iso15924($lt);
 	return 1 if $lt =~ m/^\w{4,}$/ &&  $self->_from_language($lt);
+	
 	return undef;
 }
 
