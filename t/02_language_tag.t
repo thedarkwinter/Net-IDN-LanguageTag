@@ -3,19 +3,42 @@
 use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 28;
+use Test::More tests => 45;
 use Net::IDN::LanguageTag;
 use Data::Dumper;
 
 my $lt = Net::IDN::LanguageTag->new();
 isa_ok($lt,'Net::IDN::LanguageTag');
 
+
+## Test the _IS_ISO methods
+is($lt->_is_iso639_1('en'),1,'_is_iso639_1 valid');
+is($lt->_is_iso639_1('za'),1,'_is_iso639_1 valid');
+is($lt->_is_iso639_1('qq'),undef,'_is_iso639_1 invalid');
+is($lt->_is_iso639_2('eng'),1,'_is_iso639_2 valid');
+is($lt->_is_iso639_2('fre'),1,'_is_iso639_2 valid');
+is($lt->_is_iso639_2('qqq'),undef,'_is_iso639_2 invalid');
+is($lt->_is_iso3166_1('GB'),1,'_is_iso3166_1 valid');
+is($lt->_is_iso3166_1('FR'),1,'_is_iso3166_1 valid');
+is($lt->_is_iso3166_1('QQ'),undef,'_is_iso3166_1 invalid');
+is($lt->_is_iso15924('Phnx'),1,'_is_iso15924 valid');
+is($lt->_is_iso15924(220),1,'_is_iso15924 valid');
+is($lt->_is_iso15924('Zaza'),undef,'_is_iso15924 invalid');
+
+## Test the IS_{natural} methods
+is($lt->_is_language('English'),1,'_is_language valid');
+is($lt->_is_language('Entish'),undef,'_is_language invalid');
+is($lt->_is_country('France'),1,'_is_france valid');
+is($lt->_is_country('Neverland'),undef,'_is_france valid');
+
+
+## Test from _FROM methods
+
 # FROM iso639_1
 $lt->_reset();
 $lt->_from_iso639_1('en');
 is($lt->iso639_1(),'en','from iso639_1 -> iso639_1 (same)');
 is($lt->iso639_2(),'eng','from iso639_1 -> iso639_2');
-is($lt->iso15924(),undef,'from iso639_1 -> iso15924 (undef)');
 is($lt->language(),'English','from iso639_1 -> language');
 
 # FROM iso639_2
@@ -23,24 +46,31 @@ $lt->_reset();
 $lt->_from_iso639_2('eng');
 is($lt->iso639_1(),'en','from iso639_2 -> iso639_1');
 is($lt->iso639_2(),'eng','from iso639_2 -> iso639_2 (same)');
-is($lt->iso15924(),undef,'from iso639_2 -> iso639_2 (undef)');
 is($lt->language(),'English','from iso639_2 -> language');
+
+# FROM iso3166_1
+$lt->_reset();
+$lt->_from_iso3166_1('GB');
+is($lt->iso3166_1(),'GB','from iso3166_1 -> iso3166_1 (same)');
+is($lt->country(),'United Kingdom','from iso3166_1 -> country');
 
 # FROM iso15924
 $lt->_reset();
 $lt->_from_iso15924('Phnx');
-is($lt->iso639_1(),undef,'from iso15924 -> iso639_1 (undef)');
-is($lt->iso639_2(),undef,'from iso15924 -> iso639_2 (undef)');
 is($lt->iso15924(),'Phnx','from iso15924 -> iso15924 (same)');
-is($lt->language(),undef,'from iso15924 -> language (undef)');
 
 # FROM language
 $lt->_reset();
 $lt->_from_language('English');
 is($lt->iso639_1(),'en','from language -> iso639_1');
 is($lt->iso639_2(),'eng','from language -> iso639_2');
-is($lt->iso15924(),undef,'from language -> iso15924 (undef)');
 is($lt->language(),'English','from language -> language (same)');
+
+# FROM country
+$lt->_reset();
+$lt->_from_country('France');
+is($lt->iso3166_1(),'fr','from country -> iso3166_1');
+is($lt->country(),'France','from country  -> country (same)');
 
 # Autodetect [iso639_1]
 $lt->parse('zh');
@@ -60,9 +90,11 @@ $lt->parse('220');
 is ($lt->iso15924(),'Cyrl','AutoDetect [iso15924]');
 is ($lt->iso15924_numeric(),220,'AutoDetect [iso15924_numeric]');
 
-# Autodetect [iso15924 long]
-$lt->parse('und-Zyyy');
-#is ($lt->iso15924(),'und-Zyyy','AutoDetect [iso15924 long]');
+# Autodetect [iso639_2-iso15924]
+$lt->parse('en-Latn');
+is ($lt->iso15924(),'Latn','AutoDetect iso15924 [iso639_2-iso15924]');
+is ($lt->iso639_1(),'en','AutoDetect iso639_1 [iso639_2-iso15924]');
+is ($lt->iso639_2(),'eng','AutoDetect iso639_2 [iso639_2-iso15924]');
 
 # Autodetect [language]
 $lt->parse('Chinese');
