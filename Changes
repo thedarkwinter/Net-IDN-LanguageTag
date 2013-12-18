@@ -1,3 +1,9 @@
+0.05 : Wed 18 Dec 2013
+    - Cleaned up some code
+    - Added POD data
+    - Added dispatchers to _is and _from
+    - Added lots of tests that are being skipped as they dont work yet
+
 0.04 : Wed 18 Dec 2013
     - Added ISO15924 script name detection/conversion
 

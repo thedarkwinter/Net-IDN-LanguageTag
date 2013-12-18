@@ -57,7 +57,7 @@ our @ATTRS=qw(is_grandfather is_private);
 our @FORMATS=qw(country language script variant iso3166_1 iso639_1 iso639_2 iso15924 iso15924_numeric);
 __PACKAGE__->mk_accessors((@ATTRS,@FORMATS));
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 ################################################################################
 =pod
