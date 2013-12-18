@@ -3,7 +3,7 @@
 use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 45;
+use Test::More tests => 50;
 use Net::IDN::LanguageTag;
 use Data::Dumper;
 
@@ -30,6 +30,8 @@ is($lt->_is_language('English'),1,'_is_language valid');
 is($lt->_is_language('Entish'),undef,'_is_language invalid');
 is($lt->_is_country('France'),1,'_is_france valid');
 is($lt->_is_country('Neverland'),undef,'_is_france valid');
+is($lt->_is_script('Cyrillic'),1,'_is_script valid');
+is($lt->_is_script('Squiggles'),undef,'_is_script valid');
 
 
 ## Test from _FROM methods
@@ -71,6 +73,14 @@ $lt->_reset();
 $lt->_from_country('France');
 is($lt->iso3166_1(),'fr','from country -> iso3166_1');
 is($lt->country(),'France','from country  -> country (same)');
+
+# FROM script
+$lt->_reset();
+$lt->_from_script('Cyrillic');
+is($lt->iso15924(),'Cyrl','from script -> iso15924');
+is($lt->iso15924_numeric(),'220','from script -> iso15924_numeric');
+is($lt->script(),'Cyrillic','from script -> script (same)');
+
 
 # Autodetect [iso639_1]
 $lt->parse('zh');

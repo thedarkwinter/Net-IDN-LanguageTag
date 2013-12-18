@@ -34,7 +34,7 @@ use Data::Dumper;
 
 
 use base qw/Class::Accessor/;
-our @FORMATS=qw(country language variant is_grandfather is_private iso3166_1 iso639_1 iso639_2 iso15924 iso15924_numeric);
+our @FORMATS=qw(country language script variant is_grandfather is_private iso3166_1 iso639_1 iso639_2 iso15924 iso15924_numeric);
 __PACKAGE__->mk_accessors(@FORMATS);
 
 our $VERSION = '0.03';
@@ -73,6 +73,7 @@ sub parse {
     $self->_from_iso3166_1($h{$k}) if $k eq 'iso3166_1';
     $self->_from_language($h{$k}) if $k eq 'language';
     $self->_from_country($h{$k}) if $k eq 'country';
+    $self->_from_script($h{$k}) if $k eq 'script';
     $self->variant($h{$k}) if $k eq 'variant';
   }
 	return;
@@ -120,6 +121,7 @@ sub detect {
     return ( 'iso3166_1' => $v1 ) if $self->_is_iso3166_1($v1);  # GB
     return ( 'language' => $v1 ) if $self->_is_language($v1); # English
     return ( 'country' => $v1 ) if $self->_is_country($v1); # United Kingdom
+    return ( 'script' => $v1 ) if $self->_is_script($v1); # Latin
   }
   return;
 }
@@ -133,6 +135,7 @@ sub _is_iso15924 { return ( ($_[1] =~ m/^\w{4}$/ && code2script($_[1],LOCALE_SCR
 
 sub _is_language { return ( $_[1] =~ m/^\w{3,}$/ && language2code($_[1]) ) ? 1 : undef; }
 sub _is_country { return ( $_[1] =~ m/^\w{3,}$/ && country2code($_[1]) ) ? 1 : undef; }
+sub _is_script {  return ( $_[1] =~ m/^\w{3,}$/ && script2code($_[1]) ) ? 1 : undef; }
 
 ################################################################################
 ### FROM subs
@@ -173,10 +176,12 @@ sub _from_iso15924
   {
     $self->iso15924($c);
     $self->iso15924_numeric(script_code2code($c,LOCALE_SCRIPT_ALPHA,LOCALE_SCRIPT_NUMERIC));
+     $self->script(code2script($self->iso15924));
   } elsif ($c =~ m/^\d{3}$/)
   {
      $self->iso15924_numeric($c);
      $self->iso15924(script_code2code($c,LOCALE_SCRIPT_NUMERIC,LOCALE_SCRIPT_ALPHA));
+     $self->script(code2script($self->iso15924));
   }
   return;
 }
@@ -200,6 +205,15 @@ sub _from_country
   return;
 }
 
+sub _from_script
+{
+  my ($self,$c) = @_;
+  return unless $self->_is_script($c);
+  $self->iso15924(script2code($c));
+  $self->iso15924_numeric(script_code2code($self->iso15924(),LOCALE_SCRIPT_ALPHA,LOCALE_SCRIPT_NUMERIC));
+  $self->script($c);
+  return;
+}
 
 1;
 
