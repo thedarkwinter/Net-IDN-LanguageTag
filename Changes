@@ -1,3 +1,8 @@
+0.06 : Wed 18 Dec 2013
+    - Quite an overhaul
+    - language/script/region now returns codes, and the suffix _name will return the name
+    - All the tests for 'regular' are passing, but still no support for irregular and private/grandfather (skipping)
+
 0.05 : Wed 18 Dec 2013
     - Cleaned up some code
     - Added POD data
