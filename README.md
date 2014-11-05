@@ -1,10 +1,16 @@
-Net-IDN-LanguageTag
-===================
+#### Net-IDN-LanguageTag
+* * *
 
 Net-IDN-LanguageTag attemts to automatically parse RFC5646 language tags into a
 Class::Accessor object and build as much information as possible. For example, 
 if your language tag is en-GB (language-region), the accesssor will contain the
 following methods.
+
+At the moment its a bit limited with more complex tags.
+
+TODO: http://www.langtag.net/ has some regexs that might help...
+* * *
+#### Usage 
 
 ```perl
 $tag = Net::IDN::LanguageTag->new('en-GB-Latn'); # new object parses immediately  
